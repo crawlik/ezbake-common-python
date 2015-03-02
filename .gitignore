@@ -1,0 +1,15 @@
+build/
+dist/
+*.egg_info/
+*.egg-info/
+*.pyc
+*_demo.py
+.noseids
+.python-version
+
+# IntelliJ
+*.iml
+.idea/
+
+# Maven
+target/

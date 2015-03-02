@@ -1,0 +1,109 @@
+# EzBake Configuration
+
+## Getting Started
+
+Install dependencies
+
+```
+pip install -r requirements.txt
+```
+
+Install with setuptools into development mode
+
+```
+python setup.py develop
+```
+
+Run the tests
+
+```
+nosetests
+```
+
+## Using EzBake Configuration
+
+EzBake configuration loads configuration files in the java properties format from default system locations.
+
+### Configuration loading
+
+When using the default EzConfiguration initializer, configuration files will be loaded from a few directories (in order
+of ascending precedence)
+
+1.  EZCONFIGURATION_DIR: environment variable, defaults to /etc/sysconfig/ezbake
+2.  OPENSHIFT_REPO_DIR/config: when deployed in OpenShift, additional configuration files will be loaded from this directory
+
+```py
+from ezbake.configuration.EzConfiguration import EzConfiguration
+
+configuration = EzConfiguration()
+```
+
+You can pass any number of "configuration loaders" to override the default loading behavior. Properties loaded in each
+successive loader passed in to the EzConfiguration constructor will override the properties from previous loaders.
+
+```py
+from ezbake.configuration.EzConfiguration import EzConfiguration
+from ezbake.configuration.loaders.DirectoryConfigurationLoader import DirectoryConfigurationLoader
+from ezbake.configuration.loaders.OpenShiftConfigurationLoader import OpenShiftConfigurationLoader
+
+# The default constructor acts as if a directory loader and OpenShift loader wer passed in
+default_config = EzConfiguration(DirectoryConfigurationLoader(), OpenShiftConfigurationLoader())
+
+# Add in some custom properties
+custom_props = {"my.property": "value"}
+custom_config = EzConfiguration(PropertiesConfigurationLoader(custom_props))
+
+# When using custom loaders, the default directory and OpenShift loaders are NOT loaded unless explicitly passed
+custom_props = {"my.property": "value"}
+custom_config = EzConfiguration(DirectoryConfigurationLoader(), OpenShiftConfigurationLoader(),
+                                PropertiesConfigurationLoader(custom_props))
+```
+
+### Accessing properties
+
+The EzConfiguration class is used for loading properties. After properties are loaded, they should be copied into a
+separate _configuration_ variable - a dictionary - which can be used to access property values
+
+```py
+from ezbake.configuration.EzConfiguration import EzConfiguration
+
+configuration = EzConfiguration().getProperties()
+
+my_property_value = configuration['my_property']
+```
+
+There are a number of standard property names (keys) defined in the EzBakePropertyConstants module
+
+```py
+from ezbake.configuration.constants.EzBakePropertyConstants import EzBakePropertyConstants
+
+zookeepers = configuration[EzBakePropertyConstants.ZOOKEEPER_CONNECTION_STRING]
+```
+
+__NOTE__: It is usually better to use the pre-defined configuration helpers (i.e. ZookeeperConfiguration)
+instead of referencing EzBakePropertyConstants directly.
+
+### Configuration Helpers
+
+Helper classes have been written for retrieving properties associated with common libraries or services, such as
+zookeeper and accumulo. These helpers are the preferred way for accessing configuration values since they often handle
+type conversion and setting reasonable default values.
+
+```py
+from ezbake.configuration.EzConfiguration import EzConfiguration
+from ezbake.configuration.helpers import ApplicationConfiguration, ZookeeperConfiguration
+
+configuration = EzConfiguration().getProperties()
+
+zoo_config = ZookeeperConfiguration(configuration)
+zookeeper_string = zoo_config.getZookeeperConnectionString()
+
+app_config = ApplicationConfiguration(configuration)
+app_name = app_config.getApplicationName()
+security_id = app_config.getSecurityID()
+```
+
+
+
+```
+

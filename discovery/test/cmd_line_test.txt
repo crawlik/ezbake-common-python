@@ -1,0 +1,53 @@
+///////////////////////////////////////////////////////////////////////////////
+
+
+python ezdiscovery.py
+
+python ezdiscovery.py register foo bar localhost 8080
+
+python ezdiscovery.py list-applications
+
+python ezdiscovery.py list-services foo
+
+python ezdiscovery.py list-endpoints foo bar
+
+python ezdiscovery.py application-set-security-id foo foo_sid
+
+python ezdiscovery.py application-get-security-id foo
+
+python ezdiscovery.py unregister foo bar localhost 8080
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+
+python ezdiscovery.py register-common-services bar localhost 8080
+
+python ezdiscovery.py list-common-services
+
+python ezdiscovery.py list-common-endpoints bar
+
+python ezdiscovery.py is-service-common foo
+
+python ezdiscovery.py is-service-common bar
+
+python ezdiscovery.py list-common-endpoints bar
+
+python ezdiscovery.py common-service-set-security-id bar bar_sid
+
+python ezdiscovery.py common-service-get-security-id bar
+
+python ezdiscovery.py unregister-common-services bar localhost 8080
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+python ezdiscovery.py register app svc localhost 1234
+python ezdiscovery.py register app svc localhost 5678
+python ezdiscovery.py list-endpoints app svc
+python ezdiscovery.py unregister app svc localhost 1234
+python ezdiscovery.py list-endpoints app svc
+python ezdiscovery.py unregister app svc localhost 5678
+python ezdiscovery.py list-endpoints app svc
+python ezdiscovery.py list-services app
+python ezdiscovery.py list-applications
