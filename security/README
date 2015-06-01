@@ -1,0 +1,57 @@
+EzBake Security Service - Python
+================================
+
+
+## Install
+
+```bash
+$ python setup.py install
+```
+
+__NOTE__: the tests won't run without the security service running in development mode
+
+
+## Example
+
+```py
+from ezconfiguration.EZConfiguration import EZConfiguration
+from ezsecurity.client import EzSecurityClient
+
+ezconfig = EZConfiguration()
+client = EzSecurityClient(ezconfig)
+
+client.ping()
+client.app_info("AppSecurityId", "OptionalTargetSecurityId")
+
+# pseudocode for the headers...
+dn = headers['HTTP_EZB_VERIFIED_USER_INFO']
+sig = headers['HTTP_EZB_VERIFIED_USER_INFO']
+
+# verify the headers
+client.validateSignedDn(dn, sig)
+
+# get the user's info
+token = client.user_info(dn, sig, "OptionalTargetSecurityId")  # target security ID might be your application's security ID
+
+# If you pass the token to another service, it must:
+client.validateReceivedToken(token)
+
+```
+
+## Integration Test on EzCentos VM:
+# Prerequisite:
+1. add the following to the ezbake-config.properties file on VM     
+    ezbake.security.ssl.dir=/opt/ezbake/ssl/server
+    thrift.use.ssl=true
+    ezbake.security.server.mock=false
+2. copy all the files in test/certs/server to VM at folder /opt/ezbake/ssl/server
+3. copy the content of the public key file test/certs/client/application.pub into the file 
+   /vagrant/scripts/FileBackedRegistrations.json to replace the old key for "client"
+
+# Naming of the test modules and functions
+Let the test module name and test function name start with 'IT', then using the following command to invoke 
+integration test:
+  
+nosetests -m '^IT'
+
+These integration test would not be invoked by regular nosetests command.

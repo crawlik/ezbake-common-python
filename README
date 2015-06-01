@@ -1,0 +1,92 @@
+# EzBake Common Libraries for Python
+
+This repo contains all of the core EzBake libraries for python. Essentially everything that is needed
+to write an application for EzBake.
+
+## Getting Started
+
+Clone the repo
+
+```
+git clone <repo url> ezbake-common-python
+cd ezbake-common-python
+```
+
+The layout of the directories follows a logical structure: configuration, discovery, thrift-utils, etc. Typically, each
+sub directory is it's own python package.
+
+### Dependencies
+- Python 2.7.x
+- pip
+
+```
+curl -sS --retry 5 https://bootstrap.pypa.io/get-pip.py | python
+```
+- setuptools (installed by pip)
+
+Install the required development packages with pip
+
+```
+pip install -r dev_requirements.txt
+```
+
+### Configuring pip for Artifactory
+
+We use an Artifactory Pypi repo for EzBake. The __setup_artifactory_pypi.sh__ script can be used to configure pip and
+setuptools. Just make sure to export user credentials first. Ex:
+
+```
+export ARTIFACTORY_BASE_URL=my.artifactory.server.com/artifactory
+export ARTIFACTORY_USER=my_user_name
+export ARTIFACTORY_PASS=my_artifactory_password
+```
+
+Existing configurations are saved in .bak files before being overwritten.
+
+### Installing packages
+
+Each sub project contains a requirements.txt file that can be used in conjunction with pip to install dependencies
+
+```
+pip install -r requirements.txt
+```
+
+If you find yourself needing to install an EzBake dependency, that can be installed with pip as well
+
+```
+pip install ezbake-configuration
+
+# If installing a pre-release version, i.e. 2.1rc1
+pip install --pre ezbake-configuration
+```
+
+### Publishing packages
+
+__NOTE__: These steps are outlined for reference, and should only be performed by team leads. In the future publishing
+to the pypi repo will be performed by Jenkins.
+
+For daily builds:
+
+```
+python setup.py egg_info -b "$(date "+%Y%m%d%H%M%S")" rotate -m .egg -k 5 sdist upload -r ezbake-local
+```
+
+For releases:
+
+```
+python setup.py sdist upload -r ezbake-local
+```
+
+## Deploying on EzBake
+
+EzBake requires the use of pre-packaged wheels of all dependencies for deployment. This should be done
+on a Centos 6.5 x86_64 environment.
+
+### EzBake Common pre-reqs for building wheels
+
+Due to some of the requirements of EzBake common python libraries, there are some system requirements
+for building wheels
+
+- openssl-devel
+- libffi-devel
+

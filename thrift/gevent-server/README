@@ -1,0 +1,37 @@
+# EzBake Thrift - Gevent Server
+
+The EzBake Thrift Gevent Server is a thrift server implemented with gevent. It is a performant thrift server, and
+should be used whenever possible.
+
+## Getting started
+
+Dependencies can be installed with pip
+
+```
+pip install -r requirements.txt
+```
+
+## Example Usage
+
+```py
+# Important for gevent server
+import gevent.monkey; gevent.monkey.patch_all()
+
+import logging
+import gevent
+import thrift.transport.TSSLServerSocket
+from ezbake.thrift.server.TGeventServer import TGeventServer
+
+server = TGeventServer(logging.getLogger(__name__),
+                       EzPz.Processor(EzPzHandler()),
+                       TSSLServerSocket(host='127.0.0.1',
+                                        port=self.testport,
+                                        certfile='certfile.pem'
+                                        )
+# Start server
+greenlet = gevent.spawn(TGeventServer.serve, server)
+
+# Stop server
+gevent.killall([greenlet])
+```
+

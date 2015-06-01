@@ -1,0 +1,45 @@
+# EzBake Thrift Utils
+
+EzBake Thrift Utils is a collection of modules that can be used to simplify the use of thrift and EzBake services.
+
+## Getting started
+
+Dependencies can be installed with pip
+
+```
+pip install -r requirements.txt
+```
+
+## Thrift service discovery and connection pooling
+
+The connectionpool module contains the ThriftConnectionPool class which can be used to provide easy access to thrift
+clients that handle endpoint discovery and pooling automatically. Given an application name (if not a common_service),
+service name, and thrift Client class a PoolingThriftClient object is returned.
+
+When the PoolingThriftClient is created, endpoints for the service are looked up using an EzBake Discovery client. When
+creating a new connection, the PoolingThriftClient will select an endpoint from the list of known endpoints. On
+connection failure the endpoint is removed from the list, and another endpoint is selected for the connection. If a
+connection cannot be established, a TException is raised.
+
+Since the PoolingThriftClient handles creating the connections, methods on it can be called immediately getting the
+client. Once any method returns, and before it returns the value to you, the connection will be added to a connection
+pool for later use, or closed if an error occurred.
+
+```py
+from ezbake.configuration.EzConfiguration import EzConfiguration
+from ezbake.thrift.utils.clientpool import ThriftClientPool
+
+# Test thrift service class included with thrift-utils tests
+from test.ezpz.t import EzPz
+
+# Initialize the client pool
+ez_config = EzConfiguration().getProperties()
+client_pool = ThriftClientPool(ez_config)
+
+# Get the thrift client
+ezpz_client = client_pool.get_client(service_name='ezpz', clazz=EzPz.Client)
+
+# Execute methods on the client
+ezpz_client.ez()
+
+```

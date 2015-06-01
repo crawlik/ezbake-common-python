@@ -1,0 +1,20 @@
+# EzBake Logging
+
+The EzBake Logging library can be used to help configure the root logger to log in a way compatible with EzBake logging.
+One of the things this provides is a logging pattern that is compatible with the EzBake logstash parsers. In addition,
+when using the EzBake logging configuration, log file rotation is guaranteed.
+
+## Example usage
+
+```py
+from ezbake.configuration.EzConfiguration import EzConfiguration
+from ezbake import ezlogging
+
+# Setup logging with ezbake
+ezlogging.ezConfig()
+
+import logging
+logger = logging.getLogger(__name__)
+logger.debug("log message")
+```
+
