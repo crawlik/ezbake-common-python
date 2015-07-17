@@ -20,7 +20,7 @@
     <parent>
         <groupId>ezbake</groupId>
         <artifactId>ezbake-parent</artifactId>
-        <version>2.2-SNAPSHOT</version>
+        <version>2.1</version>
     </parent>
 
     <artifactId>ezbake-common-python-parent</artifactId>
